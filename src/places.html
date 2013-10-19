@@ -9,25 +9,37 @@
         padding: 0px
       }
     </style>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&key=AIzaSyCKvoVeuqp0tCzo1Kt3xYnbsZriJbW0D00"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script>
 function init(){
-	var mapOptions = {
-	zoom: 4,
-	center: new google.maps.LatLng(50.683889,10.919444),
-	mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-	$.getJSON("http://mbsandbox.org/~mineo/places/places.json").done(function(data){
-		$.each(data, function(key, val){
-			var marker = new google.maps.Marker({
-				position: new google.maps.LatLng(val[0], val[1]),
-				map: map,
-				title: key
-			});
-		});
-	});
+    var mapOptions = {
+        zoom: 4,
+        center: new google.maps.LatLng(50.683889,10.919444),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var infotext = 
+        "<a href='https://musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
+    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    $.getJSON("http://mbsandbox.org/~mineo/places.json").done(function(data){
+        $.each(data, function(key, val){
+            mbid = key;
+            name = val['name'];
+            coordinates = val['coordinates']
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(coordinates[0], coordinates[1]),
+                map: map,
+                title: name
+            });
+            marker.mbid = mbid
+            google.maps.event.addListener(marker, 'click', function(){
+                var infowindow = new google.maps.InfoWindow({
+                    content: infotext.replace("MBIDHERE", marker.mbid)
+                });
+                infowindow.open(map, marker);
+            });
+        });
+    });
 };
 $(window).load(init);
 </script>
