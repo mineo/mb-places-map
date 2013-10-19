@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MusicBrainz Places Map</title>
+<style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&key=AIzaSyCKvoVeuqp0tCzo1Kt3xYnbsZriJbW0D00"></script>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script>
+function init(){
+	var mapOptions = {
+	zoom: 4,
+	center: new google.maps.LatLng(50.683889,10.919444),
+	mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
+	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	$.getJSON("http://mbsandbox.org/~mineo/places/places.json").done(function(data){
+		$.each(data, function(key, val){
+			var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(val[0], val[1]),
+				map: map,
+				title: key
+			});
+		});
+	});
+};
+$(window).load(init);
+</script>
+</head>
+<body>
+<div id="map-canvas"></div>
+</body>
+</html>
