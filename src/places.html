@@ -21,7 +21,7 @@ function init(){
     var infotext = 
         "<a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    $.getJSON("//mbsandbox.org/~mineo/places/places.json").done(function(data){
+    $.getJSON("places.json").done(function(data){
         $.each(data, function(key, val){
             mbid = key;
             name = val['name'];
