@@ -19,13 +19,17 @@ function addMarker(map, mbid, data){
     });
 }
 
-function init(){
+function makeMap(){
     var mapOptions = {
         zoom: 4,
         center: new google.maps.LatLng(50.683889,10.919444),
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    return new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+}
+
+function init(){
+    map = makeMap();
     $.getJSON("places.json").done(function(data){
         $.each(data, function(key, val){
             addMarker(map, key, val);
