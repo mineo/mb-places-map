@@ -7,13 +7,18 @@ var hash = new L.Hash(map);
 var infotext =
     "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
 $.getJSON("places.json").done(function(data){
+var markerCluster = new L.MarkerClusterGroup();
+var markers = [];
     $.each(data, function(key, val){
         mbid = key;
         name = val['name'];
         coordinates = val['coordinates']
-        var marker = L.marker(coordinates, {'title': name}).addTo(map);
+        var marker = L.marker(coordinates, {'title': name});
         var text = infotext.replace("MBIDHERE", mbid);
         text = text.replace("NAMEHERE", name);
-        marker.bindPopup(text)
+        marker.bindPopup(text);
+        markers.push(marker);
     });
+    markerCluster.addLayers(markers);
+    map.addLayer(markerCluster);
 });

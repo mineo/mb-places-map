@@ -1,0 +1,3 @@
+[submodule "src/leaflet.markercluster"]
+	path = src/leaflet.markercluster
+	url = https://github.com/Leaflet/Leaflet.markercluster.git
