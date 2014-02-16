@@ -1,3 +1,6 @@
 [submodule "src/leaflet.markercluster"]
 	path = src/leaflet.markercluster
 	url = https://github.com/Leaflet/Leaflet.markercluster.git
+[submodule "src/shramov-plugins"]
+	path = src/shramov-plugins
+	url = https://github.com/shramov/leaflet-plugins.git

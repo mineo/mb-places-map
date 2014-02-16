@@ -11,9 +11,12 @@ var openAerialLayer = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}
     subdomains: '1234'
 });
 
+var googleLayer = new L.Google("HYBRID");
+
 var tileLayers = {
     'OpenStreetMap': osmLayer,
-    'Open Aerial': openAerialLayer
+    'Open Aerial': openAerialLayer,
+    'Google': googleLayer
 };
 
 L.control.layers(tileLayers).addTo(map);
