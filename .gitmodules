@@ -4,3 +4,6 @@
 [submodule "src/shramov-plugins"]
 	path = src/shramov-plugins
 	url = https://github.com/shramov/leaflet-plugins.git
+[submodule "src/leaflet-hash"]
+	path = src/leaflet-hash
+	url = https://github.com/mlevans/leaflet-hash.git
