@@ -1,8 +1,23 @@
 var map = L.map('map-canvas').setView([50.683889,10.919444], 4);
-L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors.',
     maxZoom: 19
-}).addTo(map);
+});
+map.addLayer(osmLayer);
+
+var openAerialLayer = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+    attribution: '<p>Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p> Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+    maxZoom: 11,
+    subdomains: '1234'
+});
+
+var tileLayers = {
+    'OpenStreetMap': osmLayer,
+    'Open Aerial': openAerialLayer
+};
+
+L.control.layers(tileLayers).addTo(map);
+
 var hash = new L.Hash(map);
 var infotext =
     "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
