@@ -1,38 +1,19 @@
-var infotext = "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
-
-function addMarker(map, mbid, data){
-    name = data['name'];
-    coordinates = data['coordinates'];
-    var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(coordinates[0], coordinates[1]),
-        map: map,
-        title: name
+var map = L.map('map-canvas').setView([50.683889,10.919444], 4);
+L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors.',
+    maxZoom: 19
+}).addTo(map);
+var hash = new L.Hash(map);
+var infotext =
+    "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
+$.getJSON("places.json").done(function(data){
+    $.each(data, function(key, val){
+        mbid = key;
+        name = val['name'];
+        coordinates = val['coordinates']
+        var marker = L.marker(coordinates, {'title': name}).addTo(map);
+        var text = infotext.replace("MBIDHERE", mbid);
+        text = text.replace("NAMEHERE", name);
+        marker.bindPopup(text)
     });
-    marker.mbid = mbid;
-    google.maps.event.addListener(marker, 'click', function(){
-        text = infotext.replace("MBIDHERE", marker.mbid);
-        text = text.replace("NAMEHERE", marker.title);
-        var infowindow = new google.maps.InfoWindow({
-            content: text
-        });
-        infowindow.open(map, marker);
-    });
-}
-
-function makeMap(){
-    var mapOptions = {
-        zoom: 4,
-        center: new google.maps.LatLng(50.683889,10.919444),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    return new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-}
-
-function init(){
-    map = makeMap();
-    $.getJSON("places.json").done(function(data){
-        $.each(data, function(key, val){
-            addMarker(map, key, val);
-        });
-    });
-}
+});
