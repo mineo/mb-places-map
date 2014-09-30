@@ -3,9 +3,9 @@
 Usage: places-json.py path-to-target-json-file
 """
 import json
-import re
 import psycopg2 as pg
 import psycopg2.extras as pgex
+import re
 import sys
 
 if not len(sys.argv) == 2:
