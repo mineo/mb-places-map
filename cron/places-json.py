@@ -42,15 +42,17 @@ def do_request(places, filenames):
 
     # Maps normalized filenames back to their original ones
     normalizations = {}
-    for norm in resp["query"]["normalized"]:
-        normalizations[norm["to"]] = norm["from"]
+    if "normalized" in resp["query"]:
+        for norm in resp["query"]["normalized"]:
+            normalizations[norm["to"]] = norm["from"]
 
     # Insert the thumbnail links back into `places`
-    for v in resp["query"]["pages"].itervalues():
-        if "imageinfo" in v:
-            filename = normalizations.get(v["title"], v["title"])
-            mbid = filenames[filename]
-            places[mbid]["thumbnail_link"] = v["imageinfo"][0]["thumburl"]
+    if "pages" in resp["query"]:
+        for v in resp["query"]["pages"].itervalues():
+            if "imageinfo" in v:
+                filename = normalizations.get(v["title"], v["title"])
+                mbid = filenames[filename]
+                places[mbid]["thumbnail_link"] = v["imageinfo"][0]["thumburl"]
 
 
 def update_thumbnail_links(places):
