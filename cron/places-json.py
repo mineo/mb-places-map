@@ -69,7 +69,7 @@ if __name__ == "__main__":
     if not len(sys.argv) == 2:
         exit(__doc__)
 
-    db = pg.connect("dbname=musicbrainz user=musicbrainz host=127.0.0.1")
+    db = pg.connect("dbname=musicbrainz_db_slave user=musicbrainz host=127.0.0.1")
     cur = db.cursor(cursor_factory=pgex.NamedTupleCursor)
     cur.execute("""
     WITH places_urls AS (
