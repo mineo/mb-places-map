@@ -23,7 +23,9 @@ L.control.layers(tileLayers).addTo(map);
 
 var hash = new L.Hash(map);
 var infotext =
-    "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>";
+    "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>\
+     <a href=\"COMMONSLINK\" target=\"_blank\">IMAGEHERE</a>";
+var imageembed = "<img src=\"SOURCE\" alt=\"image of this place\"/>" //
 $.getJSON("places.json").done(function(data){
 var markerCluster = new L.MarkerClusterGroup();
 var markers = [];
@@ -34,6 +36,12 @@ var markers = [];
         var marker = L.marker(coordinates, {'title': name});
         var text = infotext.replace("MBIDHERE", mbid);
         text = text.replace("NAMEHERE", name);
+        if ('thumbnail_link' in val){
+            text = text.replace("COMMONSLINK", val['commons_link'])
+            text = text.replace("IMAGEHERE", imageembed.replace("SOURCE", val['thumbnail_link']))
+        } else {
+            text = text.replace("IMAGEHERE", "")
+        }
         marker.bindPopup(text);
         markers.push(marker);
     });
