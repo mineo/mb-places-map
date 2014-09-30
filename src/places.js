@@ -23,9 +23,14 @@ L.control.layers(tileLayers).addTo(map);
 
 var hash = new L.Hash(map);
 var infotext =
-    "<h3>NAMEHERE</h3><a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>\
-     <a href=\"COMMONSLINK\" target=\"_blank\">IMAGEHERE</a>";
-var imageembed = "<img src=\"SOURCE\" alt=\"image of this place\"/>" //
+    "<h3>NAMEHERE</h3>COMMONS\
+    <br/>\
+    <a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>\
+    ";
+var imageembed = "\
+    <a href=\"COMMONSLINK\" target=\"_blank\"><img src=\"SOURCE\" alt=\"image of this place\"/></a>\
+    <br/>\
+    <a href=\"COMMONSLINK\" target=\"_blank\">Image from Wikimedia Commons</a>";
 $.getJSON("places.json").done(function(data){
 var markerCluster = new L.MarkerClusterGroup();
 var markers = [];
@@ -37,10 +42,10 @@ var markers = [];
         var text = infotext.replace("MBIDHERE", mbid);
         text = text.replace("NAMEHERE", name);
         if ('thumbnail_link' in val){
-            text = text.replace("COMMONSLINK", val['commons_link'])
-            text = text.replace("IMAGEHERE", imageembed.replace("SOURCE", val['thumbnail_link']))
+            t = imageembed.replace("COMMONSLINK", val['commons_link'], "g")
+            text = text.replace("COMMONS", t.replace("SOURCE", val['thumbnail_link']))
         } else {
-            text = text.replace("IMAGEHERE", "")
+            text = text.replace("COMMONS", "")
         }
         marker.bindPopup(text);
         markers.push(marker);
