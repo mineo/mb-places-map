@@ -21,6 +21,7 @@ QUERY = {"action": "query",
          "iiurlwidth": THUMB_SIZE,
          "format": "json"}
 MAX_FILES_PER_REQUEST = 50
+HEADERS = {"User-Agent": "mb-places-map (https://de.wikipedia.org/wiki/Benutzer:Mineo; Mineo@Freenode)"}
 
 
 def do_request(places, filenames):
@@ -33,7 +34,7 @@ def do_request(places, filenames):
                       "",
                       "",
                       ""))
-    r = requests.get(url, params=newquery)
+    r = requests.get(url, params=newquery, headers=HEADERS)
     if not r.ok:
         print r.status_code, " on ", r.url
         return
