@@ -3,11 +3,13 @@
 Usage: places-json.py path-to-target-json-file
 """
 import json
-import psycopg2 as pg
-import psycopg2.extras as pgex
-import re
 import requests
 import sys
+
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.sql.expression import and_
+from mbdata.models import Place, LinkPlaceURL, URL
 
 from os.path import isfile
 from urlparse import urlparse, urlunparse
@@ -71,34 +73,20 @@ if __name__ == "__main__":
     if not len(sys.argv) == 2:
         exit(__doc__)
 
-    db = pg.connect("dbname=musicbrainz_db_slave user=musicbrainz host=127.0.0.1")
-    cur = db.cursor(cursor_factory=pgex.NamedTupleCursor)
-    cur.execute("""
-    WITH places_urls AS (
-        SELECT p.gid as gid, u.url as url
-        FROM place p
-        JOIN l_place_url lpu ON lpu.entity0 = p.id
-        JOIN link l on lpu.link = l.id
-        JOIN link_type lt on l.link_type = lt.id
-        JOIN url u on lpu.entity1 = u.id
-        WHERE p.coordinates IS NOT NULL
-        AND lt.gid = '68a4537c-f2a6-49b8-81c5-82a62b0976b7'
-        AND url LIKE '%commons.wikimedia.org%'
-    )
-    SELECT DISTINCT ON (p.gid) p.gid as gid, p.name as name, p.coordinates as coordinates, pu.url as url
-    FROM place p
-    LEFT JOIN places_urls pu on p.gid = pu.gid
-    WHERE p.coordinates IS NOT NULL;
-    """)
+    e = create_engine("postgresql://musicbrainz@127.0.0.1/musicbrainz_db_slave")
+    sess = sessionmaker(bind=e)
+    s = sess()
+    q = s.query(Place, URL).outerjoin(LinkPlaceURL).outerjoin(URL, and_(
+        URL.id == LinkPlaceURL.url_id, URL.url.like("%commons.wikimedia.org%"))).\
+        filter(Place.coordinates != None)
 
     places = {}
-    for result in cur:
-        coords = result.coordinates
-        m = re.match(r"\(([^)]+),([^)]+)\)", coords)
-        places[result.gid] = {'name': result.name,
-                              'coordinates': [float(m.group(1)), float(m.group(2))],
-                              'commons_link': result.url
-                              }
+    for place, url in q:
+        coords = place.coordinates
+        places[place.gid] = {'name': place.name,
+                             'coordinates': coords,
+                             'commons_link': url.url if url is not None else None
+                             }
 
     json_filename = sys.argv[1]
     if isfile(json_filename):
