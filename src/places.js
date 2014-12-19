@@ -22,11 +22,6 @@ var tileLayers = {
 L.control.layers(tileLayers).addTo(map);
 
 var hash = new L.Hash(map);
-var infotext =
-    "<h3>NAMEHERE</h3>COMMONS\
-    <br/>\
-    <a href='//musicbrainz.org/place/MBIDHERE'>View this place on MusicBrainz</a>\
-    ";
 var imageembed = "\
     <a href=\"COMMONSLINK\" target=\"_blank\"><img src=\"SOURCE\" alt=\"image of this place\"/></a>\
     <br/>\
@@ -39,15 +34,39 @@ var markers = [];
         name = val['name'];
         coordinates = val['coordinates']
         var marker = L.marker(coordinates, {'title': name});
-        var text = infotext.replace("MBIDHERE", mbid);
-        text = text.replace("NAMEHERE", name);
+        var info = document.createElement("div");
+
+        var name = document.createElement("h3");
+        name.textContent = val.name;
+        info.appendChild(name);
+
+        // info.appendChild(document.createElement("br"))
+
         if ('thumbnail_link' in val){
-            t = imageembed.replace("COMMONSLINK", val['commons_link'], "g")
-            text = text.replace("COMMONS", t.replace("SOURCE", val['thumbnail_link']))
-        } else {
-            text = text.replace("COMMONS", "")
+            var imagelink = document.createElement("a");
+            imagelink.href = val.commons_link
+            imagelink.target = "_blank";
+
+            var image = document.createElement("img");
+            image.alt = "image of this place";
+            image.src = val.thumbnail_link;
+
+            imagelink.appendChild(image)
+
+            info.appendChild(imagelink)
+            info.appendChild(document.createElement("br"))
+
+            var commonslink = document.createElement("a");
+            commonslink.href = val.commons_link;
+            commonslink.target = "_blank";
+            info.appendChild(commonslink)
         }
-        marker.bindPopup(text);
+        var link = document.createElement("a");
+        link.href = "//musicbrainz.org/place/" + key;
+        link.textContent = "View this place on MusicBrainz";
+        info.appendChild(link);
+
+        marker.bindPopup(info);
         markers.push(marker);
     });
     markerCluster.addLayers(markers);
