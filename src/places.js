@@ -59,6 +59,26 @@ var markers = [];
             commonslink.target = "_blank";
             info.appendChild(commonslink)
         }
+
+        events = val.events
+        if (events.length > 0){
+            var heading = document.createElement("h4");
+            heading.textContent = "Events";
+            info.appendChild(heading);
+
+            var ev_list = document.createElement("ul")
+            $.each(events, function(index, event){
+                var link = document.createElement("a");
+                link.href = "//musicbrainz.org/event/" + event.gid;
+                link.textContent = event.name;
+
+                var li = document.createElement("li");
+                li.appendChild(link);
+                ev_list.appendChild(li);
+            })
+            info.appendChild(ev_list);
+        }
+
         var link = document.createElement("a");
         link.href = "//musicbrainz.org/place/" + key;
         link.textContent = "View this place on MusicBrainz";

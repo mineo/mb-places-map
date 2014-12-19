@@ -6,10 +6,13 @@ import json
 import requests
 import sys
 
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from sqlalchemy.sql.expression import and_
-from mbdata.models import Place, LinkPlaceURL, URL
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import aliased, relationship, sessionmaker
+from sqlalchemy import and_, create_engine, func
+from mbdata.models import Event, Place, LinkEventPlace, LinkPlaceURL, URL
+
+Place.event_links = relationship("LinkEventPlace")
+Place.events = association_proxy("event_links", "event")
 
 from os.path import isfile
 from urlparse import urlparse, urlunparse
@@ -96,8 +99,36 @@ if __name__ == "__main__":
         coords = place.coordinates
         places[place.gid] = {'name': place.name,
                              'coordinates': coords,
-                             'commons_link': url
+                             'commons_link': url,
+                             'events': []
                              }
+
+    ev_alias = aliased(Event)
+
+    stmt = s.query(Place.id.label("place_id"),
+                   ev_alias.id.label("event_id"),
+                   func.row_number().over(partition_by=Place.id,
+                                          order_by=ev_alias.begin_date).
+                   label("row_num"))\
+        .outerjoin(LinkEventPlace)\
+        .outerjoin(ev_alias)\
+        .order_by(ev_alias.begin_date)\
+        .cte()
+
+    event_query = s.query(Place.gid.label("place_gid"),
+                          ev_alias)\
+        .join(stmt, Place.id == stmt.c.place_id)\
+        .join(LinkEventPlace, Place.id == LinkEventPlace.entity1_id)\
+        .join(ev_alias, ev_alias.id == LinkEventPlace.entity0_id)\
+        .filter("row_num < 3")\
+        .filter(Place.coordinates != None)
+
+    for place_gid, event in event_query:
+        places[place_gid]['events'].append(
+            {'gid': event.gid,
+             'name': event.name,
+             }
+        )
 
     json_filename = sys.argv[1]
     if isfile(json_filename):
