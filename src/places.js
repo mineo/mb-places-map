@@ -40,8 +40,6 @@ var markers = [];
         name.textContent = val.name;
         info.appendChild(name);
 
-        // info.appendChild(document.createElement("br"))
-
         if ('thumbnail_link' in val){
             var imagelink = document.createElement("a");
             imagelink.href = val.commons_link
