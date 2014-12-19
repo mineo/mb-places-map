@@ -76,16 +76,27 @@ if __name__ == "__main__":
     e = create_engine("postgresql://musicbrainz@127.0.0.1/musicbrainz_db_slave")
     sess = sessionmaker(bind=e)
     s = sess()
-    q = s.query(Place, URL).outerjoin(LinkPlaceURL).outerjoin(URL, and_(
-        URL.id == LinkPlaceURL.url_id, URL.url.like("%commons.wikimedia.org%"))).\
-        filter(Place.coordinates != None)
+
+    url_query = s.query(Place.id.label("place_id"),
+                        URL.url.label("url"))\
+                 .join(LinkPlaceURL)\
+                 .join(URL, and_(
+                     URL.id == LinkPlaceURL.url_id,
+                     URL.url.like("%commons.wikimedia.org%")))\
+                 .filter(Place.coordinates !=  None)\
+                 .cte()
+
+    place_query = s.query(Place,
+                          url_query.c.url)\
+        .outerjoin(url_query, Place.id == url_query.c.place_id)\
+        .filter(Place.coordinates != None)\
 
     places = {}
-    for place, url in q:
+    for place, url in place_query:
         coords = place.coordinates
         places[place.gid] = {'name': place.name,
                              'coordinates': coords,
-                             'commons_link': url.url if url is not None else None
+                             'commons_link': url
                              }
 
     json_filename = sys.argv[1]
