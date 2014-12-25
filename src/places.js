@@ -22,10 +22,6 @@ var tileLayers = {
 L.control.layers(tileLayers).addTo(map);
 
 var hash = new L.Hash(map);
-var imageembed = "\
-    <a href=\"COMMONSLINK\" target=\"_blank\"><img src=\"SOURCE\" alt=\"image of this place\"/></a>\
-    <br/>\
-    <a href=\"COMMONSLINK\" target=\"_blank\">Image from Wikimedia Commons</a>";
 $.getJSON("places.json").done(function(data){
 var markerCluster = new L.MarkerClusterGroup();
 var markers = [];
