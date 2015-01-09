@@ -23,8 +23,8 @@ L.control.layers(tileLayers).addTo(map);
 
 var hash = new L.Hash(map);
 $.getJSON("places.json").done(function(data){
-var markerCluster = new L.MarkerClusterGroup();
-var markers = [];
+    var markerCluster = new L.MarkerClusterGroup();
+    var markers = [];
     $.each(data, function(key, val){
         mbid = key;
         name = val['name'];
