@@ -3,7 +3,6 @@
 Usage: places-json.py path-to-target-json-file
 """
 import geojson
-import json
 import requests
 import sys
 
@@ -15,7 +14,6 @@ from mbdata.models import Event, Place, LinkEventPlace, LinkPlaceURL, URL
 Place.event_links = relationship("LinkEventPlace")
 Place.events = association_proxy("event_links", "event")
 
-from os.path import isfile
 from urlparse import urlparse, urlunparse
 from time import sleep
 
