@@ -143,12 +143,6 @@ if __name__ == "__main__":
         )
 
     json_filename = sys.argv[1]
-    if isfile(json_filename):
-        with open(json_filename, "r") as fp:
-            oldplaces = json.load(fp)
-        for k, v in places.iteritems():
-            if k in oldplaces and "thumbnail_link" in oldplaces[k]:
-                places[k]["thumbnail_link"] = oldplaces[k]["thumbnail_link"]
 
     update_thumbnail_links(places)
 
