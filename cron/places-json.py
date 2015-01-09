@@ -2,6 +2,7 @@
 """
 Usage: places-json.py path-to-target-json-file
 """
+import geojson
 import json
 import requests
 import sys
@@ -27,6 +28,18 @@ QUERY = {"action": "query",
          "format": "json"}
 MAX_FILES_PER_REQUEST = 50
 HEADERS = {"User-Agent": "mb-places-map (https://de.wikipedia.org/wiki/Benutzer:Mineo; Mineo@Freenode)"}
+
+
+def convert_to_geojson(places_dict):
+    feature_collection = geojson.FeatureCollection([])
+    for gid, place in places_dict.iteritems():
+        c = place["coordinates"]
+        point = geojson.Point((c[1], c[0]))
+        feature = geojson.Feature(id=gid, geometry=point)
+        place.pop("coordinates")
+        feature["properties"] = place
+        feature_collection["features"].append(feature)
+    return feature_collection
 
 
 def do_request(places, filenames):
@@ -96,9 +109,8 @@ if __name__ == "__main__":
 
     places = {}
     for place, url in place_query:
-        coords = place.coordinates
         places[place.gid] = {'name': place.name,
-                             'coordinates': coords,
+                             'coordinates': place.coordinates,
                              'commons_link': url,
                              'events': []
                              }
@@ -140,5 +152,7 @@ if __name__ == "__main__":
 
     update_thumbnail_links(places)
 
+    feature_collection = convert_to_geojson(places)
+
     with open(json_filename, "w") as fp:
-        json.dump(places, fp)
+        geojson.dump(feature_collection, fp)
