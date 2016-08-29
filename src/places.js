@@ -79,7 +79,7 @@ function featureToPopup(feature){
 }
 
 var hash = new L.Hash(map);
-$.getJSON("places.json").done(function(data){
+$.getJSON("//mineo.github.io/places.json").done(function(data){
     var markerCluster = new L.MarkerClusterGroup();
     var geoJsonLayer = L.geoJson(data, {
         onEachFeature: function(feature, layer) {
