@@ -5,17 +5,10 @@ var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
 });
 map.addLayer(osmLayer);
 
-var openAerialLayer = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
-    attribution: '<p>Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p> Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
-    maxZoom: 11,
-    subdomains: '1234'
-});
-
 var googleLayer = new L.Google("HYBRID");
 
 var tileLayers = {
     'OpenStreetMap': osmLayer,
-    'Open Aerial': openAerialLayer,
     'Google': googleLayer
 };
 
