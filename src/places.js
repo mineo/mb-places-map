@@ -1,5 +1,5 @@
 var map = L.map('map-canvas').setView([50.683889,10.919444], 4);
-var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+var osmLayer = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors.',
     maxZoom: 19
 });
